@@ -28,8 +28,15 @@ jobs:
         inlineScript: |
           az account show
           az storage -h
-    - name: 'deploy storage account bicep'
-      working-directory: '${{github.workspace}}'
+    - name: Deploy ADF Bicep Template
       run: |
-          cd ${{ github.workspace }}./azure-dev
-          az deployment group create  --resource-group my-test-dev --template-file ./storage_account.bicep
+        az deployment sub create --location storage_account.bicep\
+          --template-file storage_account.bicep \
+          --parameters @storage-parameter.json
+      env:
+        AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}      
+   # - name: 'deploy storage account bicep'
+    #  working-directory: '${{github.workspace}}'
+     # run: |
+      #    cd ${{ github.workspace }}./azure-dev
+      #    az deployment group create  --resource-group my-test-dev --template-file ./storage_account.bicep
