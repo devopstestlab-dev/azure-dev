@@ -29,6 +29,6 @@ jobs:
           az account show
           az storage -h
     - name: 'deploy storage account bicep'
-      working-directory: '${{github.workspace}} azure-dev'
+      working-directory: '${{github.workspace}}/azure-dev'
       run: |
           az deployment group create  --resource-group my-test-dev --template-file ./storage_account.bicep
