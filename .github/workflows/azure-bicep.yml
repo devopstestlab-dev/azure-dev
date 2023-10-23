@@ -31,7 +31,7 @@ jobs:
     - name: Deploy ADF Bicep Template
       run: |
         az deployment sub create --location storage_account.bicep\
-          --template-file azure-dev \
+          --template-file .github/workflows/azure-bicep.yml \
           --parameters @storage-parameter.json
       env:
         AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}      
