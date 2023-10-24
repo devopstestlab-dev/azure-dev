@@ -1,25 +1,41 @@
-// example.bicep
-
 param location string = 'East US'
-param dataLinkServiceName string
+param dataFactoryName string
+param pipelineName string
+param linkedServiceName string
 param datasetName string
 
-resource dataLinkService 'Microsoft.DataShare/dataLinkServices@2020-10-01-preview' = {
-  name: dataLinkServiceName
+resource dataFactory 'Microsoft.DataFactory/factories@2018-06-01' = {
+  name: dataFactoryName
   location: location
 }
 
-resource dataset 'Microsoft.DataShare/datasets@2020-10-01-preview' = {
-  parent: dataLinkService
-  name: datasetName
-  location: location
+resource linkedService 'Microsoft.DataFactory/factories/linkedServices@2018-06-01' = {
+  name: linkedServiceName
+  parent: dataFactory
   properties: {
-    datasetType: 'AzureBlob',
-    containerName: 'devcontainer',
-    connectionString: 'DefaultEndpointsProtocol=https;AccountName=rahuk;AccountKey=oXAdvzWFfKwtiAwS9Msw3ZCAZh9IGQ49Rs+x9gNfMz1j8Y6SOka/rVjIh8mRG1rhGvq+eOK7QONk+AStXzHLsQ==;EndpointSuffix=core.windows.net',
-    // Add other dataset properties as needed
+    // Linked service properties, e.g., connectionString, type, etc.
   }
 }
 
-output dataLinkServiceId string = dataLinkService.id
+resource dataset 'Microsoft.DataFactory/factories/datasets@2018-06-01' = {
+  name: datasetName
+  parent: dataFactory
+  properties: {
+    // Dataset properties, e.g., structure, linkedServiceName, type, etc.
+  }
+}
+
+resource pipeline 'Microsoft.DataFactory/factories/pipelines@2018-06-01' = {
+  name: pipelineName
+  parent: dataFactory
+  properties: {
+    activities: [
+      // Define your pipeline activities here
+    ]
+  }
+}
+
+output dataFactoryId string = dataFactory.id
+output linkedServiceId string = linkedService.id
 output datasetId string = dataset.id
+output pipelineId string = pipeline.id
