@@ -1,0 +1,32 @@
+# deploy.yml
+
+name: Deploy Data Link Service and Dataset
+
+on:
+  workflow_dispatch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Azure CLI
+      uses: azure/cli@v2
+      with:
+        azcliversion: 2.20.0
+
+    - name: Login to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Deploy ADF Bicep Template
+      run: |
+        az deployment sub create --location East US \
+          --template-file example.bicep
+          --parameters adf.json
+      env:
+        AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
