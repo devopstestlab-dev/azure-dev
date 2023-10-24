@@ -1,34 +1,28 @@
-on: [workflow_dispatch]
-
+on:
+  workflow_dispatch:
+  
 name: Azure-bicep-sample
 
 jobs:
-
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-    
     - name: Azure Login
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
     - name: Checkout
       uses: actions/checkout@v3
+      # If your files are in the root of the repository, you might not need the next line
       with:
           path: master  
+    
     - name: Deploy ADF Bicep Template
-      # Correct if your files are in .github/workflows
-      working-directory: .github/workflows/
-  # Set the working directory
       run: |
         az deployment sub create --location "East US" \
-        --template-file .github/workflows/example.bicep \
-        --parameters .github/workflows/adf.json
+        --template-file example.bicep \
+        --parameters adf.json
 
       env:
-        AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}    
-   # - name: 'deploy storage account bicep'
-    #  working-directory: '${{github.workspace}}'
-     # run: |
-      #    cd ${{ github.workspace }}./azure-dev
-      #    az deployment group create  --resource-group my-test-dev --template-file ./storage_account.bicep
+        AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
