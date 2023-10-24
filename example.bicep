@@ -16,7 +16,7 @@ resource dataset 'Microsoft.DataShare/datasets@2020-10-01-preview' = {
   properties: {
     datasetType: 'AzureBlob',
     containerName: 'devcontainer',
-    connectionString: 'DefaultEndpointsProtocol=https;AccountName=rahuk;AccountKey=oXAdvzWFfKwtiAwS9Msw3ZCAZh9IGQ49Rs+x9gNfMz1j8Y6SOka/rVjIh8mRG1rhGvq+eOK7QONk+AStXzHLsQ==;EndpointSuffix=' + environment('core.windows.net'),
+    connectionString: 'DefaultEndpointsProtocol=https;AccountName=rahuk;AccountKey=oXAdvzWFfKwtiAwS9Msw3ZCAZh9IGQ49Rs+x9gNfMz1j8Y6SOka/rVjIh8mRG1rhGvq+eOK7QONk+AStXzHLsQ==;EndpointSuffix=core.windows.net',
     // Add other dataset properties as needed
   }
 }
