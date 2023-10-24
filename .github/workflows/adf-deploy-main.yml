@@ -20,8 +20,8 @@ jobs:
       working-directory: '${{github.workspace}}'  # Set the working directory
       run: |
         az deployment sub create --location "East US" \
-          --template-file .github/workflows/example.bicep \
-          --parameters .github/workflows/adf.json
+          --template-file example.bicep \
+          --parameters adf.json
       env:
         AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}    
    # - name: 'deploy storage account bicep'
