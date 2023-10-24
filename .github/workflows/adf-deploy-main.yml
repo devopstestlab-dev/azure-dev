@@ -17,7 +17,7 @@ jobs:
       with:
           path: master  
     - name: Deploy ADF Bicep Template
-      working-directory: '${{github.workspace}}'  # Set the working directory
+      working-directory: '${{github.workspace}}./.github/workflows/'  # Set the working directory
       run: |
         az deployment sub create --location "East US" \
           --template-file example.bicep \
