@@ -1,5 +1,6 @@
-on: [workflow_dispatch]
-
+on:
+  workflow_dispatch:
+  
 name: Azure-bicep-sample
 
 jobs:
@@ -14,14 +15,12 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        path: .  # Checkout to the root directory
+        path: ./  # Checkout to the root directory
         
     - name: Deploy ADF Bicep Template
- # Correct if your files are in .github/workflows
-      working-directory: ./master
       run: |
         az deployment sub create --location "East US" \
-        --template-file ./master/azure-dev/example.bicep \
-        --parameters ./master/azure-dev/adf.json
-    env:
+        --template-file ./azure-dev/example.bicep \
+        --parameters ./azure-dev/adf.json
+      env:
         AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
