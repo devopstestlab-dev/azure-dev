@@ -28,7 +28,7 @@ jobs:
           az storage -h
     - name: Deploy ADF Bicep Template
       run: |
-        az deployment sub create --location East US \
+        az deployment sub create --location " East US " \
           --template-file example.bicep
           --parameters adf.json
       env:
