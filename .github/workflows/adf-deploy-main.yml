@@ -1,6 +1,5 @@
-on:
-  workflow_dispatch:
-  
+on: [workflow_dispatch]
+
 name: Azure-bicep-sample
 
 jobs:
@@ -14,15 +13,14 @@ jobs:
         
     - name: Checkout
       uses: actions/checkout@v3
-      # If your files are in the root of the repository, you might not need the next line
       with:
-          path: master  
-    
+        path: .  # Checkout to the root directory
+        
     - name: Deploy ADF Bicep Template
       run: |
         az deployment sub create --location "East US" \
-        --template-file example.bicep \
-        --parameters adf.json
+          --template-file example.bicep \
+          --parameters adf.json
 
       env:
         AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
