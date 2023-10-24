@@ -28,9 +28,9 @@ jobs:
           az storage -h
     - name: Deploy ADF Bicep Template
       run: |
-        az deployment sub create --location East US \
+        az deployment sub create --location " East US "\
           --template-file https://github.com/devopstestlab-dev/azure-dev/blob/master/.github/workflows/example.bicep
-          --parameters adf.json
+          --parameters https://github.com/devopstestlab-dev/azure-dev/blob/master/.github/workflows/adf.json
       env:
         AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}    
    # - name: 'deploy storage account bicep'
