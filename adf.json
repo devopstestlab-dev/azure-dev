@@ -10,7 +10,7 @@
       "value": "MyDataLinkService"
     },
     "datasetName": {
-      "value": "your-dataset-name"
+      "value": "MyDataset"
     }
   }
 }
