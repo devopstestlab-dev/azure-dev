@@ -5,13 +5,13 @@ param dataLinkServiceName string
 param datasetName string
 
 resource dataLinkService 'Microsoft.DataShare/dataLinkServices@2020-10-01-preview' = {
-  name: MyDataLinkService
+  name: dataLinkServiceName
   location: location
 }
 
 resource dataset 'Microsoft.DataShare/datasets@2020-10-01-preview' = {
   parent: dataLinkService
-  name: MyDataset
+  name: datasetName
   location: location
   properties: {
     datasetType: 'AzureBlob',
