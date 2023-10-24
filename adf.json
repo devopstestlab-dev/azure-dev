@@ -7,7 +7,7 @@
       "value": "East US"
     },
     "dataLinkServiceName": {
-      "value": "your-data-link-service-name"
+      "value": "MyDataLinkService"
     },
     "datasetName": {
       "value": "your-dataset-name"
