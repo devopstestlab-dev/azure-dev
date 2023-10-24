@@ -29,7 +29,7 @@ jobs:
     - name: Deploy ADF Bicep Template
       run: |
         az deployment sub create --location East US \
-          --template-file example.bicep
+          --template-file https://github.com/devopstestlab-dev/azure-dev/blob/master/.github/workflows/example.bicep
           --parameters adf.json
       env:
         AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}    
