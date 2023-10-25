@@ -12,9 +12,10 @@ param subscription_id string = '7b44425c-979b-476a-9cca-cd73b2fcff42'
 
 resource storageaccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
   name: storage_account_name
+  scope: subscription_id  // Set the scope to the subscription level
   location: location
   kind: 'StorageV2'
-  properties:{
+  properties: {
     minimumTlsVersion: 'TLS1_2'
   }
   sku: {
@@ -23,5 +24,5 @@ resource storageaccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
 }
 
 output storageAccountId string = storageaccount.id
-output subscriptionId string = subscription_id  // Added output for subscription ID
+output subscriptionId string = subscription_id
 output resourceGroupName string = resource_group_name
