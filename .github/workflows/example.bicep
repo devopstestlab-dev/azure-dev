@@ -1,41 +1,59 @@
-param location string = 'East US'
-param dataFactoryName string
-param pipelineName string
-param linkedServiceName string
-param datasetName string
-
-resource dataFactory 'Microsoft.DataFactory/factories@2018-06-01' = {
-  name: dataFactoryName
-  location: location
-}
-
-resource linkedService 'Microsoft.DataFactory/factories/linkedServices@2018-06-01' = {
-  name: linkedServiceName
-  parent: dataFactory
+resource symbolicname 'Microsoft.DataFactory/factories/linkedservices@2018-06-01' = {
+  name: 'string'
+  parent: resourceSymbolicName
   properties: {
-    // Linked service properties, e.g., connectionString, type, etc.
-  }
-}
-
-resource dataset 'Microsoft.DataFactory/factories/datasets@2018-06-01' = {
-  name: datasetName
-  parent: dataFactory
-  properties: {
-    // Dataset properties, e.g., structure, linkedServiceName, type, etc.
-  }
-}
-
-resource pipeline 'Microsoft.DataFactory/factories/pipelines@2018-06-01' = {
-  name: pipelineName
-  parent: dataFactory
-  properties: {
-    activities: [
-      // Define your pipeline activities here
+    annotations: [
+      any
     ]
+    connectVia: {
+      parameters: {}
+      referenceName: 'string'
+      type: 'IntegrationRuntimeReference'
+    }
+    description: 'string'
+    parameters: {}
+    type: 'string'
+    // For remaining properties, see LinkedService objects
   }
 }
-
-output dataFactoryId string = dataFactory.id
-output linkedServiceId string = linkedService.id
-output datasetId string = dataset.id
-output pipelineId string = pipeline.id
+type: 'AzureBlobStorage'
+  typeProperties: {
+    accountKey: {
+      secretName: any()
+      secretVersion: any()
+      store: {
+        parameters: {}
+        referenceName: 'string'
+        type: 'LinkedServiceReference'
+      }
+      type: 'string'
+    }
+    accountKind: 'string'
+    authenticationType: 'string'
+    azureCloudType: any()
+    connectionString: any()
+    containerUri: any()
+    credential: {
+      referenceName: 'string'
+      type: 'CredentialReference'
+    }
+    encryptedCredential: 'string'
+    sasToken: {
+      secretName: any()
+      secretVersion: any()
+      store: {
+        parameters: {}
+        referenceName: 'string'
+        type: 'LinkedServiceReference'
+      }
+      type: 'string'
+    }
+    sasUri: any()
+    serviceEndpoint: 'string'
+    servicePrincipalId: any()
+    servicePrincipalKey: {
+      type: 'string'
+      // For remaining properties, see SecretBase objects
+    }
+    tenant: any()
+  }
