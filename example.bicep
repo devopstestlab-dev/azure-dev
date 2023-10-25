@@ -5,7 +5,7 @@ param storage_account_name string = 'st${uniqueString(resourceGroup().name)}'
 param location string = 'East US' 
 
 @description('resource group name')
-param resource_group_name string = 'my-test-dev'
+param resource_group_name string = 'DefaultResourceGroup-EUS'
 
 @description('subscription ID')
 param subscription_id string = '7b44425c-979b-476a-9cca-cd73b2fcff42'
