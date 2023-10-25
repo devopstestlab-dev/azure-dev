@@ -2,10 +2,10 @@
 param storage_account_name string = 'st${uniqueString(resourceGroup().name)}'
 
 @description('storage account location')
-param location string = 'East US' 
+param location string = 'East US'
 
 @description('resource group name')
-param resource_group_name string = 'DefaultResourceGroup-EUS'
+param resource_group_name string = 'my-test-dev'
 
 @description('subscription ID')
 param subscription_id string = '7b44425c-979b-476a-9cca-cd73b2fcff42'
@@ -23,3 +23,4 @@ resource storageaccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
 }
 
 output storageAccountId string = storageaccount.id
+output subscriptionId string = subscription_id  // Added output for subscription ID
