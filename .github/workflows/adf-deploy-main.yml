@@ -22,7 +22,6 @@ jobs:
         az deployment sub create --location "East US" \
         --template-file example.bicep \
         --parameters adf.json \
-        --subscription 7b44425c-979b-476a-9cca-cd73b2fcff42 \
-        --resource-group my-test-dev
+        --subscription 7b44425c-979b-476a-9cca-cd73b2fcff42
       env:
         AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
