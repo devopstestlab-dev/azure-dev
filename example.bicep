@@ -1,27 +1,33 @@
-@description('storage account name')
-param storage_account_name string = 'st${uniqueString(resourceGroup().name)}'
+@minLength(3)
+@maxLength(11)
+param storagePrefix string
 
-@description('storage account location')
-param location string = 'East US'
+@allowed([
+  'Standard_LRS'
+  'Standard_GRS'
+  'Standard_RAGRS'
+  'Standard_ZRS'
+  'Premium_LRS'
+  'Premium_ZRS'
+  'Standard_GZRS'
+  'Standard_RAGZRS'
+])
+param storageSKU string = 'Standard_LRS'
 
-@description('resource group name')
-param resource_group_name string = 'my-test-dev'
+param location string = resourceGroup().location
 
-@description('subscription ID')
-param subscription_id string = '7b44425c-979b-476a-9cca-cd73b2fcff42'
+var uniqueStorageName = '${storagePrefix}${uniqueString(resourceGroup().id)}'
 
-resource storageaccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
-  name: storage_account_name
+resource stg 'Microsoft.Storage/storageAccounts@2021-04-01' = {
+  name: uniqueStorageName
   location: location
-  kind: 'StorageV2'
-  properties:{
-    minimumTlsVersion: 'TLS1_2'
-  }
   sku: {
-    name: 'Premium_LRS'
+    name: storageSKU
+  }
+  kind: 'StorageV2'
+  properties: {
+    supportsHttpsTrafficOnly: true
   }
 }
 
-output storageAccountId string = storageaccount.id
-output subscriptionId string = subscription_id  // Added output for subscription ID
-output resourceGroupName string = resource_group_name
+output storageEndpoint object = stg.properties.primaryEndpoints
