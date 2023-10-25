@@ -2,7 +2,7 @@
 param storage_account_name string = 'st${uniqueString(resourceGroup().name)}'
 
 @description('storage account location')
-param location string = 'west europe' 
+param location string = 'East US' 
 
 
 resource storageaccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
