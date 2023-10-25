@@ -1,24 +1,18 @@
-param location string = 'East US'
-param dataLinkServiceName string
-param datasetName string
+@description('storage account name')
+param storage_account_name string = 'st${uniqueString(resourceGroup().name)}'
 
-resource dataLinkService 'Microsoft.DataShare/dataLinkServices@2020-10-01-preview' = {
-  name: MyDataLinkService
-  location: location
-}
+@description('storage account location')
+param location string = 'west europe' 
 
-resource dataset 'Microsoft.DataShare/datasets@2020-10-01-preview' = {
-  parent: dataLinkService
-  name: MyDataset
+
+resource storageaccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
+  name: storage_account_name
   location: location
-  properties: {
-    datasetType: 'AzureBlob',
-    containerName: 'devcontainer',
-    connectionString: 'DefaultEndpointsProtocol=https;AccountName=rahuk;AccountKey=oXAdvzWFfKwtiAwS9Msw3ZCAZh9IGQ49Rs+x9gNfMz1j8Y6SOka/rVjIh8mRG1rhGvq+eOK7QONk+AStXzHLsQ==;EndpointSuffix=core.windows.net',
-    // Add other dataset properties as needed
-    description: 'This is a sample dataset.'
+  kind: 'StorageV2'
+  properties:{
+    minimumTlsVersion: 'TLS1_2'
+  }
+  sku: {
+    name: 'Premium_LRS'
   }
 }
-
-output dataLinkServiceId string = dataLinkService.id
-output datasetId string = dataset.id
