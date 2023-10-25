@@ -24,3 +24,4 @@ resource storageaccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
 
 output storageAccountId string = storageaccount.id
 output subscriptionId string = subscription_id  // Added output for subscription ID
+output resourceGroupName string = resource_group_name
