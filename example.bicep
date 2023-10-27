@@ -5,7 +5,7 @@ param dataFactoryDataSetInName string = 'rahuldataset'
 param dataFactoryLinkedServiceName string = 'rahullinkedfervice'
 param dataFactoryDataSetOutName string = 'rahuldatasetout'
 var pipelineName = 'rahulpipeline' // Replace 'YourPipelineName' with the actual name of your pipeline
-var dataFactoryName = 'rahuldatafactory'
+var dataFactoryName = 'rkkllidatafactory'
 
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
