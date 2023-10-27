@@ -1,64 +1,122 @@
 param location string='westus'
+param storageAccountName string = 'myStorageAccountName'
+param blobContainerName string = 'myBlobContainerName'
+param dataFactoryDataSetInName string = 'myDataSetInName'
+param dataFactoryLinkedServiceName string = 'myLinkedServiceName'
+param dataFactoryDataSetOutName string = 'myDataSetOutName'
+var pipelineName = 'myPipelineName' // Replace 'YourPipelineName' with the actual name of your pipeline
+var dataFactoryName = 'myDataFactoryName'
 
-//---Data Factory
-resource storage 'Microsoft.Storage/storageAccounts@2022-09-01'={
-  name:'testdbdevaccounttt'
-  location:location
-  kind:'StorageV2'
-  sku:{
-    name:'Standard_GRS'
+
+resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
+  name: storageAccountName
+  location: location
+  sku: {
+    name: 'Standard_LRS'
   }
-  properties:{
-    accessTier:'Hot'
-    supportsHttpsTrafficOnly:true
-    isHnsEnabled:true
-  }
+  kind: 'StorageV2'
 }
-resource datafactory 'Microsoft.DataFactory/factories@2018-06-01' = {
-  name: 'Adf-bicepss'
+
+resource blobContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-08-01' = {
+  name: '${storageAccountName}/default/${blobContainerName}'
+}
+
+
+resource dataFactory 'Microsoft.DataFactory/factories@2018-06-01' = {
+  name: dataFactoryName
   location: location
   identity: {
     type: 'SystemAssigned'
   }
+}
+
+resource dataFactoryLinkedService 'Microsoft.DataFactory/factories/linkedservices@2018-06-01' = {
+  parent: dataFactory
+  name: dataFactoryLinkedServiceName
   properties: {
-    globalParameters: {}
-    publicNetworkAccess: 'Enabled'
+    type: 'AzureBlobStorage'
+    typeProperties: {
+      connectionString: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value}'
+    }
   }
 }
-//--- Data Factory Pipeline
-resource pipeline 'Microsoft.DataFactory/factories/pipelines@2018-06-01' = {
-  name: 'SamplePipeline'
-  parent: datafactory
+
+resource dataFactoryDataSetIn 'Microsoft.DataFactory/factories/datasets@2018-06-01' = {
+  parent: dataFactory
+  name: dataFactoryDataSetInName
+  properties: {
+    linkedServiceName: {
+      referenceName: dataFactoryLinkedService.name
+      type: 'LinkedServiceReference'
+    }
+    type: 'Binary'
+    typeProperties: {
+      location: {
+        type: 'AzureBlobStorageLocation'
+        container: blobContainerName
+        folderPath: 'input'
+        fileName: 'emp.txt'
+      }
+    }
+  }
+}
+
+resource dataFactoryDataSetOut 'Microsoft.DataFactory/factories/datasets@2018-06-01' = {
+  parent: dataFactory
+  name: dataFactoryDataSetOutName
+  properties: {
+    linkedServiceName: {
+      referenceName: dataFactoryLinkedService.name
+      type: 'LinkedServiceReference'
+    }
+    type: 'Binary'
+    typeProperties: {
+      location: {
+        type: 'AzureBlobStorageLocation'
+        container: blobContainerName
+        folderPath: 'output'
+      }
+    }
+  }
+}
+
+resource dataFactoryPipeline 'Microsoft.DataFactory/factories/pipelines@2018-06-01' = {
+  parent: dataFactory
+  name: pipelineName
   properties: {
     activities: [
-      // Add your activities here
+      {
+        name: 'MyCopyActivity'
+        type: 'Copy'
+        typeProperties: {
+          source: {
+            type: 'BinarySource'
+            storeSettings: {
+              type: 'AzureBlobStorageReadSettings'
+              recursive: true
+            }
+          }
+          sink: {
+            type: 'BinarySink'
+            storeSettings: {
+              type: 'AzureBlobStorageWriteSettings'
+            }
+          }
+          enableStaging: false
+        }
+        inputs: [
+          {
+            referenceName: dataFactoryDataSetIn.name
+            type: 'DatasetReference'
+          }
+        ]
+        outputs: [
+          {
+            referenceName: dataFactoryDataSetOut.name
+            type: 'DatasetReference'
+          }
+        ]
+      }
     ]
-  }
-}
-//--- Data Factory Linked Service
-resource adls_linked_service 'Microsoft.DataFactory/factories/linkedservices@2018-06-01' = {
-  name: 'adflinkedservicess'
-  parent: datafactory
-  properties: {
-    annotations: []
-    description: 'linked_service_for_adls'
-    parameters: {}
-    type: 'AzureBlobFS'
-    typeProperties: {
-      url: storage.properties.primaryEndpoints.dfs
-      //encryptedCredential:storage.listKeys(storage.id).keys[0].value
-      servicePrincipalCredential: {
-        type: 'SecureString'
-        value: 'gkd8Q~21dwWFdAsEtbRA8FSqGiCBgU35u4JM8cyC'
-      }
-      servicePrincipalId:'gkd8Q~21dwWFdAsEtbRA8FSqGiCBgU35u4JM8cyC'
-      servicePrincipalCredentialType:'ServicePrincipalKey'
-      azureCloudType:'AzurePublic'
-      servicePrincipalKey: {
-        type: 'SecureString'
-        value: '<serviceprincipalKey>'
-      }
-      tenant: 'd2068f38-7912-4bde-b425-02c56c28c86f'      
-    }
   }
 }
