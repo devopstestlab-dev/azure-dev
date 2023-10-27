@@ -1,11 +1,11 @@
 param location string='westus'
-param storageAccountName string = 'myStorageAccountName'
-param blobContainerName string = 'myBlobContainerName'
-param dataFactoryDataSetInName string = 'myDataSetInName'
-param dataFactoryLinkedServiceName string = 'myLinkedServiceName'
-param dataFactoryDataSetOutName string = 'myDataSetOutName'
-var pipelineName = 'myPipelineName' // Replace 'YourPipelineName' with the actual name of your pipeline
-var dataFactoryName = 'myDataFactoryName'
+param storageAccountName string = 'devstorageforazure'
+param blobContainerName string = 'myblobContainerName'
+param dataFactoryDataSetInName string = 'mydatasetInName'
+param dataFactoryLinkedServiceName string = 'mylinkedferviceName'
+param dataFactoryDataSetOutName string = 'mydatasetoutName'
+var pipelineName = 'mypipelineName' // Replace 'YourPipelineName' with the actual name of your pipeline
+var dataFactoryName = 'mydatafactoryName'
 
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' = {
