@@ -2,7 +2,7 @@ param location string='westus'
 
 //---Data Factory
 resource storage 'Microsoft.Storage/storageAccounts@2022-09-01'={
-  name:'testdbdevaccount'
+  name:'testdbdevaccounttt'
   location:location
   kind:'StorageV2'
   sku:{
@@ -15,7 +15,7 @@ resource storage 'Microsoft.Storage/storageAccounts@2022-09-01'={
   }
 }
 resource datafactory 'Microsoft.DataFactory/factories@2018-06-01' = {
-  name: 'Adf-bicep'
+  name: 'Adf-bicepss'
   location: location
   identity: {
     type: 'SystemAssigned'
@@ -25,9 +25,19 @@ resource datafactory 'Microsoft.DataFactory/factories@2018-06-01' = {
     publicNetworkAccess: 'Enabled'
   }
 }
+//--- Data Factory Pipeline
+resource pipeline 'Microsoft.DataFactory/factories/pipelines@2018-06-01' = {
+  name: 'SamplePipeline'
+  parent: datafactory
+  properties: {
+    activities: [
+      // Add your activities here
+    ]
+  }
+}
 //--- Data Factory Linked Service
 resource adls_linked_service 'Microsoft.DataFactory/factories/linkedservices@2018-06-01' = {
-  name: 'adflinkedservic'
+  name: 'adflinkedservicess'
   parent: datafactory
   properties: {
     annotations: []
