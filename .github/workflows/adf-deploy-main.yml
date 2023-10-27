@@ -1,6 +1,6 @@
 on:
   workflow_dispatch:
-  
+
 name: Azure-bicep-sample
 
 jobs:
@@ -11,16 +11,15 @@ jobs:
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-        
+
     - name: Checkout
       uses: actions/checkout@v3
       with:
         path: ./  # Checkout to the root directory
-        
+
     - name: Deploy ADF Bicep Template
       run: |
         az deployment group create --resource-group my-test-dev \
-        az deployment sub create --location "East US" \
         --template-file example.bicep \
         --subscription 7b44425c-979b-476a-9cca-cd73b2fcff42
       
