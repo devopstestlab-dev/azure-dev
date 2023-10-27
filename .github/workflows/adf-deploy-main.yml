@@ -22,7 +22,7 @@ jobs:
         az deployment group create --resource-group my-test-dev \
         --template-file example.bicep \
         --subscription 7b44425c-979b-476a-9cca-cd73b2fcff42
-        --debug
+        
       
       env:
         AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
