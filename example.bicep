@@ -1,11 +1,12 @@
-param location string='westus'
-param storageAccountName string = 'myExistingStorageAccountName'
-param blobContainerName string = 'myExistingBlobContainerName'
-param dataFactoryDataSetInName string = 'myExistingDataSetInName'
-param dataFactoryLinkedServiceName string = 'myExistingLinkedServiceName'
-param dataFactoryDataSetOutName string = 'myExistingDataSetOutName'
-var pipelineName = 'myExistingPipelineName' // Replace 'YourPipelineName' with the actual name of your pipeline
-var dataFactoryName = 'myExistingDataFactoryName'
+param location string ='westus'
+param storageAccountName string = 'devstorageforazure'
+param blobContainerName string = 'rahulblob'
+param dataFactoryDataSetInName string = 'devdatsetdemott'
+param dataFactoryLinkedServiceName string = 'devlinkedservydemo'
+param dataFactoryDataSetOutName string = 'myDataSetOutName'
+var pipelineName = 'devpipelinedemo' // Replace 'YourPipelineName' with the actual name of your pipeline
+var dataFactoryName = 'rkkllidatafactory'
+
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' existing = {
   name: storageAccountName
@@ -19,19 +20,54 @@ resource dataFactory 'Microsoft.DataFactory/factories@2018-06-01' existing = {
   name: dataFactoryName
 }
 
-resource dataFactoryLinkedService 'Microsoft.DataFactory/factories/linkedservices@2018-06-01' existing = {
+resource dataFactoryLinkedService 'Microsoft.DataFactory/factories/linkedservices@2018-06-01' = {
   parent: dataFactory
   name: dataFactoryLinkedServiceName
+  properties: {
+    type: 'AzureBlobStorage'
+    typeProperties: {
+      connectionString: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};AccountKey=${storageAccount.listKeys().keys[0].value}'
+    }
+  }
 }
 
-resource dataFactoryDataSetIn 'Microsoft.DataFactory/factories/datasets@2018-06-01' existing = {
+resource dataFactoryDataSetIn 'Microsoft.DataFactory/factories/datasets@2018-06-01' = {
   parent: dataFactory
   name: dataFactoryDataSetInName
+  properties: {
+    linkedServiceName: {
+      referenceName: dataFactoryLinkedService.name
+      type: 'LinkedServiceReference'
+    }
+    type: 'Binary'
+    typeProperties: {
+      location: {
+        type: 'AzureBlobStorageLocation'
+        container: blobContainerName
+        folderPath: 'input'
+        fileName: 'emp.txt'
+      }
+    }
+  }
 }
 
-resource dataFactoryDataSetOut 'Microsoft.DataFactory/factories/datasets@2018-06-01' existing = {
+resource dataFactoryDataSetOut 'Microsoft.DataFactory/factories/datasets@2018-06-01' = {
   parent: dataFactory
   name: dataFactoryDataSetOutName
+  properties: {
+    linkedServiceName: {
+      referenceName: dataFactoryLinkedService.name
+      type: 'LinkedServiceReference'
+    }
+    type: 'Binary'
+    typeProperties: {
+      location: {
+        type: 'AzureBlobStorageLocation'
+        container: blobContainerName
+        folderPath: 'output'
+      }
+    }
+  }
 }
 
 resource dataFactoryPipeline 'Microsoft.DataFactory/factories/pipelines@2018-06-01' = {
