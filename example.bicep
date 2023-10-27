@@ -1,33 +1,54 @@
-@minLength(3)
-@maxLength(11)
-param storagePrefix string
+param location string='westus'
 
-@allowed([
-  'Standard_LRS',
-  'Standard_GRS',
-  'Standard_RAGRS',
-  'Standard_ZRS',
-  'Premium_LRS',
-  'Premium_ZRS',
-  'Standard_GZRS',
-  'Standard_RAGZRS'
-])
-param storageSKU string = 'Standard_LRS'
-
-param location string = resourceGroup().location
-
-var uniqueStorageName = '${storagePrefix}${uniqueString(subscription().id)}'
-
-resource stg 'Microsoft.Storage/storageAccounts@2021-04-01' = {
-  name: uniqueStorageName
-  location: location
-  sku: {
-    name: storageSKU
+//---Data Factory
+resource storage 'Microsoft.Storage/storageAccounts@2022-09-01'={
+  name:'test-db'
+  location:location
+  kind:'StorageV2'
+  sku:{
+    name:'Standard_GRS'
   }
-  kind: 'StorageV2'
-  properties: {
-    supportsHttpsTrafficOnly: true
+  properties:{
+    accessTier:'Hot'
+    supportsHttpsTrafficOnly:true
+    isHnsEnabled:true
   }
 }
-
-output storageEndpoint object = stg.properties.primaryEndpoints
+resource datafactory 'Microsoft.DataFactory/factories@2018-06-01' = {
+  name: 'Adf-bicep'
+  location: location
+  identity: {
+    type: 'SystemAssigned'
+  }
+  properties: {
+    globalParameters: {}
+    publicNetworkAccess: 'Enabled'
+  }
+}
+//--- Data Factory Linked Service
+resource adls_linked_service 'Microsoft.DataFactory/factories/linkedservices@2018-06-01' = {
+  name: 'adflinkedservic'
+  parent: datafactory
+  properties: {
+    annotations: []
+    description: 'linked_service_for_adls'
+    parameters: {}
+    type: 'AzureBlobFS'
+    typeProperties: {
+      url: storage.properties.primaryEndpoints.dfs
+      //encryptedCredential:storage.listKeys(storage.id).keys[0].value
+      servicePrincipalCredential: {
+        type: 'SecureString'
+        value: 'gkd8Q~21dwWFdAsEtbRA8FSqGiCBgU35u4JM8cyC'
+      }
+      servicePrincipalId:'gkd8Q~21dwWFdAsEtbRA8FSqGiCBgU35u4JM8cyC'
+      servicePrincipalCredentialType:'ServicePrincipalKey'
+      azureCloudType:'AzurePublic'
+      servicePrincipalKey: {
+        type: 'SecureString'
+        value: '<serviceprincipalKey>'
+      }
+      tenant: 'd2068f38-7912-4bde-b425-02c56c28c86f'      
+    }
+  }
+}
