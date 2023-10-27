@@ -19,9 +19,9 @@ jobs:
         
     - name: Deploy ADF Bicep Template
       run: |
+        az deployment group create --resource-group my-test-dev \
         az deployment sub create --location "East US" \
         --template-file example.bicep \
-        
         --subscription 7b44425c-979b-476a-9cca-cd73b2fcff42
       
       env:
