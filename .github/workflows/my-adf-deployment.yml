@@ -1,27 +1,27 @@
-name: futura-adf-deployment
+name: futura-Infra
 
 on:
   workflow_dispatch:
-permissions:
-      id-token: write
-      contents: read
-
 jobs:
-  call-wf-in-reusable-repo:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          path: ./  # Checkout to the root directory
+    build-and-deploy:
+      runs-on: ubuntu-latest
+      steps:
 
-      - name: Call External Storage Workflow
-        uses: ./.github/workflows/adf-deploy-main.yml@v2.1.10
+        # Checkout code
+      - uses: actions/checkout@main
+
+        # Log into Azure
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+        # Deploy ARM template
+      - name: Run ARM deploy
+        uses: azure/arm-deploy@v1
         with:
           branchname: master
           template-file: ${{ env.TEMPLATEFILE }}
           azureRegion: ${{ env.AZUREREGION }}
           resourceGroup: ${{ env.RESOURCEGROUP }}
 
-        env:
-          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+       
