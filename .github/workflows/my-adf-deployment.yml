@@ -1,30 +1,29 @@
-name: futura-Infra
-
 on:
   workflow_dispatch:
+  
+name: Azure-arm-sample
 
-permissions:  
-  id-token: write
-  contents: read
 jobs:
-    build-and-deploy:
-      runs-on: ubuntu-latest
-      steps:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-        # Checkout code
-      - uses: actions/checkout@main
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        path: ./  # Checkout to the root directory
 
-        # Log into Azure
-      - uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-        # Deploy ARM template
-      - name: Run ARM deploy
-        uses: azure/arm-deploy@v1
-        with:
-          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
-          resourceGroupName: my-test-dev
-          region: ${{ env.AZUREREGION }}
-          template: ${{ env.TEMPLATEFILE }}
-        
+    - name: Deploy ARM Template
+      id: arm
+      uses: azure/arm-deploy@v1
+      with:
+        scope: resourcegroup
+        subscriptionId: 7b44425c-979b-476a-9cca-cd73b2fcff42
+        region: East US
+        resourceGroupName: my-test-dev
+        template: example.bicep
+        failOnStdErr: true
