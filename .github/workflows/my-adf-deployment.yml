@@ -16,14 +16,12 @@ jobs:
           path: ./  # Checkout to the root directory
 
       - name: Call External Storage Workflow
-        uses: .github/workflows/adf-deploy-main.yml@v2.1.10
+        uses: ./.github/workflows/adf-deploy-main.yml@v2.1.10
         with:
-        
           branchname: master
           template-file: ${{ env.TEMPLATEFILE }}
-          env: ${{ env.AZUREREGION }}
           azureRegion: ${{ env.AZUREREGION }}
           resourceGroup: ${{ env.RESOURCEGROUP }}
 
         env:
-          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }} 
+          AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
