@@ -22,6 +22,13 @@ jobs:
         with:
           creds: '${{ secrets.AZURE_CREDENTIALS }}'  # Reference the Service Connection secret
 
+      # Debug: Display environment variables
+      - name: Debug Environment Variables
+        run: |
+          echo "TEMPLATEFILE: $TEMPLATEFILE"
+          echo "AZURE_SUBSCRIPTIONID: $AZURE_SUBSCRIPTIONID"
+          echo "AZURE_AZUREREGION: $AZURE_AZUREREGION"
+
       # Deploy ARM template with environment variables
       - name: Deploy ARM Template
         id: arm
@@ -35,4 +42,3 @@ jobs:
           failOnStdErr: true
         env:
           ENV: dev
-          
