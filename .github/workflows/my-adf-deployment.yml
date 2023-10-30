@@ -18,7 +18,7 @@ jobs:
         uses: azure/arm-deploy@v1
         with:
           scope: resourcegroup
-          resourceGroupName: my-test-dev  # Replace with your actual resource group name
+          resourceGroupName: ${{ env.RESOURCEGROUP }}  # Replace with your actual resource group name
           subscriptionId: ${{ env.subscriptionId }}
           region: ${{ env.AZUREREGION }}
           template: ${{ env.TEMPLATEFILE }}
