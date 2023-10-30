@@ -1,110 +1,36 @@
-@description('The name of the function app that you wish to create.')
-param appName string = 'fnapp${uniqueString(resourceGroup().id)}'
+param azureServiceConnectionName string = 'serviceconnectionautomatic'
 
-@description('Storage Account type')
-@allowed([
-  'Standard_LRS'
-  'Standard_GRS'
-  'Standard_RAGRS'
-])
-param storageAccountType string = 'Standard_LRS'
+param deploymentScope string = 'dev'
 
-@description('Location for all resources.')
-param location string = resourceGroup().location
+param resourceGroupName string = 'my-test-dev'
+param location string = 'East US'
 
-@description('Location for Application Insights')
-param appInsightsLocation string
 
-@description('The language worker runtime to load in the function app.')
-@allowed([
-  'node'
-  'dotnet'
-  'java'
-])
-param runtime string = 'node'
-
-var functionAppName = appName
-var hostingPlanName = appName
-var applicationInsightsName = appName
-var storageAccountName = '${uniqueString(resourceGroup().id)}azfunctions'
-var functionWorkerRuntime = runtime
-
-resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
-  name: storageAccountName
+resource serviceConnection 'Microsoft.Resources/serviceConnections@2019-03-01' = {
+  name: azureServiceConnectionName
   location: location
-  sku: {
-    name: storageAccountType
-  }
-  kind: 'Storage'
   properties: {
-    supportsHttpsTrafficOnly: true
-    defaultToOAuthAuthentication: true
+    serviceType: 'AzureResourceManagement'
+    authenticationType: 'ServicePrincipal'
+    tenantId: subscription().tenantId
+    subscriptionId: subscription().subscriptionId
+    clientId: '1388a79b-94af-4633-9a95-1c747bba25ac'
+    clientSecret: 'Uqm8Q~M6Isa90_2253FECvsa-ffL2Any06YQMa8a'
   }
 }
 
-resource hostingPlan 'Microsoft.Web/serverfarms@2021-03-01' = {
-  name: hostingPlanName
+resource deployment 'Microsoft.Resources/deployments@2021-04-01' = {
+  name: 'DeployBicepFiles'
   location: location
-  sku: {
-    name: 'Y1'
-    tier: 'Dynamic'
-  }
-  properties: {}
-}
-
-resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
-  name: functionAppName
-  location: location
-  kind: 'functionapp'
-  identity: {
-    type: 'SystemAssigned'
-  }
   properties: {
-    serverFarmId: hostingPlan.id
-    siteConfig: {
-      appSettings: [
-        {
-          name: 'AzureWebJobsStorage'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
-        }
-        {
-          name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
-        }
-        {
-          name: 'WEBSITE_CONTENTSHARE'
-          value: toLower(functionAppName)
-        }
-        {
-          name: 'FUNCTIONS_EXTENSION_VERSION'
-          value: '~4'
-        }
-        {
-          name: 'WEBSITE_NODE_DEFAULT_VERSION'
-          value: '~14'
-        }
-        {
-          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: applicationInsights.properties.InstrumentationKey
-        }
-        {
-          name: 'FUNCTIONS_WORKER_RUNTIME'
-          value: functionWorkerRuntime
-        }
-      ]
-      ftpsState: 'FtpsOnly'
-      minTlsVersion: '1.2'
+    templateLink: {
+      uri: 'https://dev.azure.com/azuredevopst/mytestdev/_apis/git/repositories/azure-dev/items/fuction.bicep?download=true'
     }
-    httpsOnly: true
-  }
-}
-
-resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
-  name: applicationInsightsName
-  location: appInsightsLocation
-  kind: 'web'
-  properties: {
-    Application_Type: 'web'
-    Request_Source: 'rest'
+    parametersLink: {
+      uri: 'https://dev.azure.com/azuredevopst/mytestdev/_apis/git/repositories/azure-dev/items/fuction.bicep.params?download=true'
+    }
+    mode: 'Incremental'
+    deploymentScope: deploymentScope
+    resourceGroupName: resourceGroupName
   }
 }
