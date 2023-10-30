@@ -1,4 +1,4 @@
-param location string = 'westus'
+
 param storageAccountName string = 'devstorageforazure'
 param blobContainerName string = 'rahulblob'
 param dataFactoryDataSetInName string = 'todaydevdatsetdemott'
@@ -11,9 +11,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' existing 
   name: storageAccountName
 }
 
-resource blobContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2021-08-01' existing = {
-  name: '${storageAccountName}/default/${blobContainerName}'
-}
+
 
 resource dataFactory 'Microsoft.DataFactory/factories@2018-06-01' existing = {
   name: dataFactoryName
