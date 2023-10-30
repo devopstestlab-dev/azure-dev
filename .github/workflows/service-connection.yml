@@ -1,0 +1,36 @@
+name: adf-deploy
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          path: ./  # Checkout to the root directory
+
+      # Use Azure Login Service Connection
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: '${{ secrets.AZURE_CREDENTIALS }}'  # Reference the Service Connection secret
+
+      # Deploy ARM template with environment variables
+      - name: Deploy ARM Template
+        id: arm
+        uses: azure/arm-deploy@v1
+        with:
+          scope: resourcegroup
+          subscriptionId: 7b44425c-979b-476a-9cca-cd73b2fcff42
+          region: East US
+          resourceGroupName: my-test-dev
+          template: fuction.bicep
+        
+          
