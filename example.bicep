@@ -1,12 +1,11 @@
-param location string ='westus'
+param location string = 'westus'
 param storageAccountName string = 'devstorageforazure'
 param blobContainerName string = 'rahulblob'
 param dataFactoryDataSetInName string = 'todaydevdatsetdemott'
 param dataFactoryLinkedServiceName string = 'todevlinkedservydemo'
-param dataFactoryDataSetOutName string = 'myDataSetOutName'
-var pipelineName = 'todevpipelinedemo' // Replace 'YourPipelineName' with the actual name of your pipeline
+param dataFactoryDataSetOutName string = 'rgsrgrhr'
+var pipelineName = 'todevpipelinedemo'
 var dataFactoryName = 'rkkllidatafactory'
-
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2021-08-01' existing = {
   name: storageAccountName
