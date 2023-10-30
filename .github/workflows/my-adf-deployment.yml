@@ -2,26 +2,26 @@ name: futura-Infra
 
 on:
   workflow_dispatch:
+  
+permissions:  
+  id-token: write
+  contents: read
+
 jobs:
-    build-and-deploy:
-      runs-on: ubuntu-latest
-      steps:
+  deploy-arm-template:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-        # Checkout code
-      - uses: actions/checkout@main
-
-        # Log into Azure
-      - uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-        # Deploy ARM template
-      - name: Run ARM deploy
+      - name: Deploy ARM Template
         uses: azure/arm-deploy@v1
         with:
-          branchname: master
-          template-file: ${{ env.TEMPLATEFILE }}
-          azureRegion: ${{ env.AZUREREGION }}
-          resourceGroup: ${{ env.RESOURCEGROUP }}
-
-       
+          scope: resourcegroup
+          subscriptionId: ${{ env.subscriptionId }}
+          region: ${{ env.AZUREREGION }}
+          resourceGroupName: ${{ env.RESOURCEGROUP }}
+          template: ${{ env.TEMPLATEFILE }}
+          failOnStdErr: true
+        env:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
