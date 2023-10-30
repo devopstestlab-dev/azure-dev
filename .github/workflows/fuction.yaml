@@ -1,36 +1,110 @@
-name: fucntion-deploy
 
-on:
-  workflow_dispatch:
+param appName string = 'fnapp${uniqueString(resourceGroup().id)}'
 
-permissions:
-  id-token: write
-  contents: read
+@description('Storage Account type')
+@allowed([
+  'Standard_LRS'
+  'Standard_GRS'
+  'Standard_RAGRS'
+])
+param storageAccountType string = 'Standard_LRS'
 
-jobs:
-  build-and-deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          path: ./  # Checkout to the root directory
+@description('Location for all resources.')
+param location string = resourceGroup().location
 
-      # Use Azure Login Service Connection
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: '${{ secrets.AZURE_CREDENTIALS }}'  # Reference the Service Connection secret
+@description('Location for Application Insights')
+param appInsightsLocation string
 
-      # Deploy ARM template with environment variables
-      - name: Deploy ARM Template
-        id: arm
-        uses: azure/arm-deploy@v1
-        with:
-          scope: resourcegroup
-          subscriptionId: 7b44425c-979b-476a-9cca-cd73b2fcff42
-          region: East US
-          resourceGroupName: my-test-dev
-          template: example.bicep
-        
-          
+@description('The language worker runtime to load in the function app.')
+@allowed([
+  'node'
+  'dotnet'
+  'java'
+])
+param runtime string = 'java'
+
+var functionAppName = appName
+var hostingPlanName = appName
+var applicationInsightsName = appName
+var storageAccountName = '${uniqueString(resourceGroup().id)}azfunctions'
+var functionWorkerRuntime = runtime
+
+resource storageAccount 'Microsoft.Storage/storageAccounts@2022-05-01' = {
+  name: storageAccountName
+  location: location
+  sku: {
+    name: storageAccountType
+  }
+  kind: 'Storage'
+  properties: {
+    supportsHttpsTrafficOnly: true
+    defaultToOAuthAuthentication: true
+  }
+}
+
+resource hostingPlan 'Microsoft.Web/serverfarms@2021-03-01' = {
+  name: hostingPlanName
+  location: location
+  sku: {
+    name: 'Y1'
+    tier: 'Dynamic'
+  }
+  properties: {}
+}
+
+resource functionApp 'Microsoft.Web/sites@2021-03-01' = {
+  name: functionAppName
+  location: location
+  kind: 'functionapp'
+  identity: {
+    type: 'SystemAssigned'
+  }
+  properties: {
+    serverFarmId: hostingPlan.id
+    siteConfig: {
+      appSettings: [
+        {
+          name: 'AzureWebJobsStorage'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
+        }
+        {
+          name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccountName};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storageAccount.listKeys().keys[0].value}'
+        }
+        {
+          name: 'WEBSITE_CONTENTSHARE'
+          value: toLower(functionAppName)
+        }
+        {
+          name: 'FUNCTIONS_EXTENSION_VERSION'
+          value: '~4'
+        }
+        {
+          name: 'WEBSITE_NODE_DEFAULT_VERSION'
+          value: '~14'
+        }
+        {
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: applicationInsights.properties.InstrumentationKey
+        }
+        {
+          name: 'FUNCTIONS_WORKER_RUNTIME'
+          value: functionWorkerRuntime
+        }
+      ]
+      ftpsState: 'FtpsOnly'
+      minTlsVersion: '1.2'
+    }
+    httpsOnly: true
+  }
+}
+
+resource applicationInsights 'Microsoft.Insights/components@2020-02-02' = {
+  name: applicationInsightsName
+  location: appInsightsLocation
+  kind: 'web'
+  properties: {
+    Application_Type: 'web'
+    Request_Source: 'rest'
+  }
+}
