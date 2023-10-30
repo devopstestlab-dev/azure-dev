@@ -17,10 +17,10 @@ jobs:
       - name: Deploy ARM Template
         uses: azure/arm-deploy@v1
         with:
-          scope: resourcegroup
+          scope: my-test-dev
           subscriptionId: ${{ env.subscriptionId }}
           region: ${{ env.AZUREREGION }}
-          resourceGroupName: my-test-dev
+          resourceGroupName: ${{ env.RESOURCEGROUP }}
           template: ${{ env.TEMPLATEFILE }}
           failOnStdErr: true
         env:
