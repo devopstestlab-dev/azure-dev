@@ -1,10 +1,10 @@
 param location string ='westus'
 param storageAccountName string = 'devstorageforazure'
 param blobContainerName string = 'rahulblob'
-param dataFactoryDataSetInName string = 'devdatsetdemott'
-param dataFactoryLinkedServiceName string = 'devlinkedservydemo'
+param dataFactoryDataSetInName string = 'todaydevdatsetdemott'
+param dataFactoryLinkedServiceName string = 'todevlinkedservydemo'
 param dataFactoryDataSetOutName string = 'myDataSetOutName'
-var pipelineName = 'devpipelinedemo' // Replace 'YourPipelineName' with the actual name of your pipeline
+var pipelineName = 'todevpipelinedemo' // Replace 'YourPipelineName' with the actual name of your pipeline
 var dataFactoryName = 'rkkllidatafactory'
 
 
