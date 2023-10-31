@@ -22,13 +22,17 @@ jobs:
         with:
           creds: '${{ secrets.AZURE_CREDENTIALS }}'  # Reference the Service Connection secret
 
+      # Display available subscriptions (for debugging purposes)
+      - name: List Subscriptions
+        run: az account list
+
       # Deploy Bicep file
       - name: Deploy Service Connection
         uses: azure/arm-deploy@v1
         with:
           subscriptionId: ${{ secrets.AZURE_SUBSCRIPTIONID }}
           resourceGroupName: ${{ secrets.AZUREREGION }}
-          template: ./serviconnection.bicep.bicep
+          template: ./serviconnection.bicep
           parameters: devOpsOrganizationName=azuredevopst 
-          patToken: 5q47ozznl24doyze3z763na7ig3qiaivohtxkxkdhybub2scpc4a
+          patToken: ${{ secrets.PATTOKEN }}
           failOnStdErr: false
