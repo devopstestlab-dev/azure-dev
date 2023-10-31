@@ -1,9 +1,7 @@
 param azureDevOpsOrgUrl string = 'https://dev.azure.com/azuredevopst'
 param azureDevOpsProjectName string = 'mytestdev'
 param serviceConnectionName string = 'myconnectionjj'
-param resourceGroupName string = 'my-test-dev'
 param subscriptionId string = '7b44425c-979b-476a-9cca-cd73b2fcff42'
-
 
 var body = {
   data: {
@@ -18,15 +16,17 @@ var body = {
 resource serviceConnection 'Microsoft.Azure.DevOps/azureservices@2020-07-14-preview' = {
   name: serviceConnectionName
   properties: {
-    name: serviceConnectionName
-    type: 'azurerm'
-    url: '${azureDevOpsOrgUrl}/${azureDevOpsProjectName}/_settings/adminservices?resourceId=${resourceGroupName}'
+    displayName: serviceConnectionName
+    endpointUrl: '${azureDevOpsOrgUrl}/${azureDevOpsProjectName}/_apis/serviceendpoint/endpoints/${serviceConnectionName}'
+    scope: 'subscription'
     data: body.data
     authorization: {
+      scheme: 'ServicePrincipal'
       parameters: {
         tenantid: subscription().tenantId
+        serviceprincipalid: 'b7eb4c20-dcd4-4c18-bc99-1f6de9a9c35b'
+        serviceprincipalkey: 'FL38Q~h_FqUfKDTn2qT66LpnFmSbFhCffODY.dr-'
         subscriptionid: subscriptionId
-        
       }
     }
   }
