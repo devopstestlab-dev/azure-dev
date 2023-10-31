@@ -20,11 +20,13 @@ jobs:
       - name: Azure Login
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }} # Reference the Service Connection secret
+          creds: '${{ secrets.AZURE_CREDENTIALS }}'  # Reference the Service Connection secret
 
       # Display available subscriptions (for debugging purposes)
       - name: List Subscriptions
         run: az account list
+
+      # other parts of your YAML file remain unchanged
 
       # Deploy Bicep file
       - name: Deploy Service Connection
@@ -33,6 +35,7 @@ jobs:
           subscriptionId: 7b44425c-979b-476a-9cca-cd73b2fcff42
           resourceGroupName: my-test-dev
           template: ./serviconnection.bicep
-          parameters: devOpsOrganizationName=azuredevopst 
+          parameters: devOpsOrganizationName=azuredevopst
           patToken: ${{ secrets.PATTOKEN }}
           failOnStdErr: false
+
