@@ -13,7 +13,7 @@ var body = {
   }
 }
 
-resource serviceConnection 'Microsoft.Azure.DevOps/azureservices@2020-07-14-preview' = {
+resource Microsoft_DevOps_serviceendpoints 'Microsoft.DevOps/serviceendpoints@2020-11-01-preview' = {
   name: serviceConnectionName
   properties: {
     displayName: serviceConnectionName
