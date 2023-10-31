@@ -20,7 +20,7 @@ jobs:
       - name: Azure Login
         uses: azure/login@v1
         with:
-          creds: '${{ secrets.AZURE_CREDENTIALS }}'  # Reference the Service Connection secret
+          creds: ${{ secrets.AZURE_CREDENTIALS }} # Reference the Service Connection secret
 
       # Display available subscriptions (for debugging purposes)
       - name: List Subscriptions
