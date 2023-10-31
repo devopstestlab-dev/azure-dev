@@ -1,4 +1,4 @@
-name: service-deploy-infra
+name: service-deploy
 
 on:
   workflow_dispatch:
@@ -8,27 +8,27 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: dev
-
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          path: ./  # Checkout to the root directory
 
-    # Log into Azure
-    - name: Login to Azure
-      uses: azure/login@v1
-      with:
-        credentials: ${{ secrets.AZURE_CREDENTIALS }}
+      # Use Azure Login Service Connection
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: '${{ secrets.AZURE_CREDENTIALS }}'  # Reference the Service Connection secret
 
-    # Deploy Bicep file
-    - name: Deploy Service Connection
-      uses: azure/arm-deploy@v1
-      with:
-        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTIONID }}
-        resourceGroupName: ${{ secrets.AZUREREGION }}
-        template: ./serviconnection.bicep.bicep
-        parameters: 'devOpsOrganizationName=azuredevopst patToken=5q47ozznl24doyze3z763na7ig3qiaivohtxkxkdhybub2scpc4a'
-        failOnStdErr: false
+      # Deploy Bicep file
+      - name: Deploy Service Connection
+        uses: azure/arm-deploy@v1
+        with:
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTIONID }}
+          resourceGroupName: ${{ secrets.AZUREREGION }}
+          template: ./serviconnection.bicep.bicep
+          parameters: devOpsOrganizationName=azuredevopst 
+          patToken: 5q47ozznl24doyze3z763na7ig3qiaivohtxkxkdhybub2scpc4a
+          failOnStdErr: false
