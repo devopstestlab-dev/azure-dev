@@ -31,7 +31,7 @@ jobs:
         uses: azure/arm-deploy@v1
         with:
           subscriptionId: 7b44425c-979b-476a-9cca-cd73b2fcff42
-          resourceGroupName: ${{ secrets.RESOURCEGROUP }}
+          resourceGroupName: my-test-dev
           template: ./serviconnection.bicep
           parameters: devOpsOrganizationName=azuredevopst 
           patToken: ${{ secrets.PATTOKEN }}
