@@ -1,30 +1,12 @@
-param personalAccessToken string = '${{secrets.PATTOKEN}}'
-param subscriptionId string = '${{secrets.AZURE_SUBSCRIPTIONID}}'
-param subscriptionName string = 'Pay-As-You-Go'
-param location string = 'eastus'
-
-resource serviceConnection 'Microsoft.DevOps/serviceConnections@2020-07-14-preview' = {
-  name: subscriptionName
+resource aadServiceConnection 'Microsoft.DevOps/serviceEndpoints@2023-04-03' = {
+  name: 'Azure AD'
   properties: {
-    serviceEndpointType: 'azurerm'
-    serviceEndpointProjectReferences: [
-      {
-        projectReference: {
-          id: subscriptionId
-          name: subscriptionName
-        }
-        serviceEndpointReference: {
-          id: '00000000-0000-0000-0000-000000000000'
-          name: subscriptionName
-        }
-      }
-    ]
-    authorization: {
-      scheme: 'Header'
-      parameters: {
-        Authorization: 'Basic ${base64("${personalAccessToken}:${subscriptionId}")}'
-      }
-    }
+    serviceEndpointType: 'AzureRm'
+    authenticationType: 'AADServicePrincipal'
+    subscriptionId: subscription().subscriptionId
+    tenantId: parameters('d2068f38-7912-4bde-b425-02c56c28c86f')
+    clientId: parameters('7ee9f5fd-1c76-463f-af74-d1fe37ac7cd8')
+    clientSecret: parameters('lwE8Q~5fc-ACItwkA_963dSi~4wCqiTr_fVLzdda')
+    armUrl: parameters('https://dev.azure.com/azuredevopst')
   }
-  location: location
 }
