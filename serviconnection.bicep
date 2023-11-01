@@ -1,11 +1,11 @@
-param orgUrl string = 'https://dev.azure.com/azuredevopst'
 param personalAccessToken string = '${{secrets.PATTOKEN}}'
 param subscriptionId string = '${{secrets.AZURE_SUBSCRIPTIONID}}'
 param subscriptionName string = 'Pay-As-You-Go'
+param location string = 'eastus'
 
 resource serviceConnection 'Microsoft.DevOps/serviceConnections@2020-07-14-preview' = {
+  name: subscriptionName
   properties: {
-    name: subscriptionName
     serviceEndpointType: 'azurerm'
     serviceEndpointProjectReferences: [
       {
@@ -22,9 +22,9 @@ resource serviceConnection 'Microsoft.DevOps/serviceConnections@2020-07-14-previ
     authorization: {
       scheme: 'Header'
       parameters: {
-        Authorization: 'Basic ' + base64(personalAccessToken + ':' + subscriptionId)
+        Authorization: 'Basic ${base64("${personalAccessToken}:${subscriptionId}")}'
       }
     }
   }
-  location: 'eastus'
+  location: location
 }
