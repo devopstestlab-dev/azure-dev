@@ -1,32 +1,41 @@
-param location string = 'eastus'
-param serviceConnectionName string = 'test'
-param projectName string = 'mytestdev'
-param servicePrincipalId string = '7ee9f5fd-1c76-463f-af74-d1fe37ac7cd8'
-param servicePrincipalKey string = 'shh8Q~d78jIIhTYtDTxKy8akSIEzpgrMXS0vvbsM'
-param servicePrincipalTenantId string = 'd2068f38-7912-4bde-b425-02c56c28c86f'
+param webAppName string = uniqueString(resourceGroup().id) // Generate unique String for web app name
+param sku string = 'F1' // The SKU of App Service Plan
+param linuxFxVersion string = 'node|14-lts' // The runtime stack of web app
+param location string = resourceGroup().location // Location for all resources
+param repositoryUrl string = 'https://github.com/Azure-Samples/nodejs-docs-hello-world'
+param branch string = 'master'
+var appServicePlanName = toLower('AppServicePlan-${webAppName}')
+var webSiteName = toLower('wapp-${webAppName}')
 
-resource serviceConnection 'Microsoft.DevOps/serviceconnections@2020-07-14-preview' = {
- name: serviceConnectionName
- location: location
- properties: {
-    serviceEndpointType: 'azurerm'
-    projectName: projectName
-    description: 'Service connection to connect AzureRM to Azure DevOps'
-    authorization: {
-      parameters: {
-        serviceprincipalid: servicePrincipalId
-        serviceprincipalkey: servicePrincipalKey
-        tenantid: servicePrincipalTenantId
-      }
-      scheme: 'ServicePrincipal'
-    }
-    data: {
-      subscriptionId: 'shh8Q~d78jIIhTYtDTxKy8akSIEzpgrMXS0vvbsM'
-      subscriptionName: 'Pay-As-You-Go'
-      environment: 'AzureCloud'
-      scopeLevel: 'Subscription'
-    }
- }
+resource appServicePlan 'Microsoft.Web/serverfarms@2020-06-01' = {
+  name: appServicePlanName
+  location: location
+  properties: {
+    reserved: true
+  }
+  sku: {
+    name: sku
+  }
+  kind: 'linux'
 }
 
-output serviceConnectionId string = serviceConnection.id
+resource appService 'Microsoft.Web/sites@2020-06-01' = {
+  name: webSiteName
+  location: location
+  properties: {
+    serverFarmId: appServicePlan.id
+    siteConfig: {
+      linuxFxVersion: linuxFxVersion
+    }
+  }
+}
+
+resource srcControls 'Microsoft.Web/sites/sourcecontrols@2021-01-01' = {
+  parent: appService
+  name: 'web'
+  properties: {
+    repoUrl: repositoryUrl
+    branch: branch
+    isManualIntegration: true
+  }
+}
