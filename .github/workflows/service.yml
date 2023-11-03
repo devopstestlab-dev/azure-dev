@@ -35,7 +35,5 @@ jobs:
           subscriptionId: 7b44425c-979b-476a-9cca-cd73b2fcff42
           resourceGroupName: my-test-dev
           template: ./serviconnection.bicep
-          clientSecret: ${{ secrets.PATTOKEN }}
-          patToken: ${{ secrets.CLIENTSECRET}}
-          failOnStdErr: false
+         
 
